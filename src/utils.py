@@ -33,13 +33,13 @@ def load_data(data_dir='../data', data_file='cmc.data'):
     return data
 
 
-def split_data(data):
+def split_data(data, y_on='class'):
     '''
     Split data to train and test set (stratify on y).
     Return dict: {'train':{'X', 'y'}, 'test':{'X', 'y'}}
     '''
-    X = data.drop('class', axis=1)
-    y = data[['class']]
+    X = data.drop(y_on, axis=1)
+    y = data[[y_on]]
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, 
@@ -128,7 +128,7 @@ def plot_network(bn):
     plt.show()
 
 
-def run_experiment(data, network, estimator='BayesianEstimator'):
+def run_experiment(data, network, estimator='BayesianEstimator', y_on='class'):
     # Declare data sets to variables
     X_train = data['train']['X']
     y_train = data['train']['y']
@@ -147,7 +147,7 @@ def run_experiment(data, network, estimator='BayesianEstimator'):
     bn_model.fit(
         training_data=data['train']
     )
-    y_pred = bn_model.predict(X_test)
+    y_pred = bn_model.predict(X_test, y_on=y_on)
 
     return get_metrics(
         y_true=y_test,

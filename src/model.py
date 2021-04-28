@@ -63,7 +63,7 @@ class BayesianNetworkModel:
         # )
 
 
-    def predict(self, X):    
+    def predict(self, X, y_on='class'):  
         '''
         Make prediction on model.
         '''
@@ -77,9 +77,9 @@ class BayesianNetworkModel:
                 evidence = dict(row)
                 y_pred.append(
                     ve_infer.map_query(
-                        variables=['class'], 
+                        variables=[y_on], 
                         evidence=evidence
-                    )['class']
+                    )[y_on]
                 )
 
         return y_pred

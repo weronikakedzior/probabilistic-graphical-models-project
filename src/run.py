@@ -13,10 +13,10 @@ from model import BayesianNetworkModel
 from runner import run_experiments
 
 
-def run(results_file='../out/xyz.csv'):
+def run(results_file='../out/xyz.csv', y_on='class'):
     # Data loading and train/test split
     data = utils.load_data()
-    data = utils.split_data(data)
+    data = utils.split_data(data, y_on=y_on)
 
     # Data copy (without discretization)
     data_copy = deepcopy(data)
@@ -103,7 +103,7 @@ def run(results_file='../out/xyz.csv'):
 
     network_5 = BayesianModel()
     for col in list(X_train.columns):
-        network_5.add_edge('class', col)
+        network_5.add_edge(y_on, col)
 
     est = HillClimbSearch(train_ds)
     hcs_bic = est.estimate(scoring_method=BicScore(train_ds))
@@ -156,7 +156,8 @@ def run(results_file='../out/xyz.csv'):
     result_df = run_experiments(
         discretized_data_dict=discretized_data_dict, 
         networks_dict=networks_dict, 
-        estimators_dict=estimators_dict 
+        estimators_dict=estimators_dict, 
+        y_on=y_on
     )
 
     result_df.to_csv(results_file)
@@ -169,5 +170,6 @@ if __name__ == '__main__':
     results_file = os.path.join(out_dir, out_file)
 
     run(
-        results_file=results_file
+        results_file=results_file,
+        y_on='class'  # n_children class
     )

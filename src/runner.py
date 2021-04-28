@@ -19,7 +19,8 @@ from model import BayesianNetworkModel
 def run_experiments(
     discretized_data_dict: dict, 
     networks_dict: dict, 
-    estimators_dict: dict
+    estimators_dict: dict,
+    y_on='class'
 ):
     n_experiments = len(discretized_data_dict) * len(networks_dict) * len(estimators_dict)
     experiment_num = 0
@@ -36,7 +37,8 @@ def run_experiments(
                 model_results = utils.run_experiment(
                     data=discretized_data, 
                     network=network,
-                    estimator=estimator
+                    estimator=estimator, 
+                    y_on=y_on
                 )
 
                 result_df = result_df.append({
