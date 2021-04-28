@@ -5,9 +5,15 @@ import networkx as nx
 import pandas as pd
 from matplotlib import pyplot as plt
 from networkx.drawing.nx_agraph import graphviz_layout
+from pgmpy.estimators import BicScore, BDeuScore, HillClimbSearch, K2Score, MmhcEstimator, PC
+from pgmpy.models import BayesianModel
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import KBinsDiscretizer
+
+from model import BayesianNetworkModel
+# notebooks
+# from .model import BayesianNetworkModel
 
 
 def load_data(data_dir='../data', data_file='cmc.data'):
@@ -86,7 +92,7 @@ def get_classification_report(y_true, y_pred):
     )
 
 
-def get_metrics(y_true, y_pred, average='micro'):
+def get_metrics(y_true, y_pred, average='micro', prec=3):
     '''
     Return accuracy, precision, recall and f1_score
         for given y_true and y_pred.
@@ -97,10 +103,10 @@ def get_metrics(y_true, y_pred, average='micro'):
     f1 = f1_score(y_true, y_pred, average=average)
 
     return {
-        'accuracy': accuracy,
-        'precision': precision,
-        'recall': recall,
-        'f1': f1
+        'accuracy': round(accuracy, prec),
+        'precision': round(precision, prec),
+        'recall': round(recall, prec),
+        'f1': round(f1, prec)
     }
 
 
@@ -120,3 +126,31 @@ def plot_network(bn):
         arrowsize=20,
     )
     plt.show()
+
+
+def run_experiment(data, network, estimator='BayesianEstimator'):
+    # Declare data sets to variables
+    X_train = data['train']['X']
+    y_train = data['train']['y']
+    X_test = data['test']['X']
+    y_test = data['test']['y']
+    train_ds = pd.concat([X_train, y_train], axis=1)
+    test_ds = pd.concat([X_test, y_test], axis=1)
+
+    nodes = list(train_ds.columns)
+
+    bn_model = BayesianNetworkModel(
+        nodes=nodes,
+        network=network,
+        fit_estimator=estimator
+    )
+    bn_model.fit(
+        training_data=data['train']
+    )
+    y_pred = bn_model.predict(X_test)
+
+    return get_metrics(
+        y_true=y_test,
+        y_pred=y_pred,
+        average='macro'
+    )
