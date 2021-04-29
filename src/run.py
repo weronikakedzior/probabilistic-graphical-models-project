@@ -26,15 +26,15 @@ def run(results_file='../out/xyz.csv', y_on='class'):
     # Declare discretized data dict
     discretized_data_dict = {}
     for n_bins in range(3,10,3):  # [3,6,9]
-        deta = data_copy
+        data_ = deepcopy(data_copy)
         key = str(n_bins)+'_bins'
-        data = utils.discretize_data(
-            data=data, 
+        data_ = utils.discretize_data(
+            data=data_, 
             continuous_attrs=continuous_attrs,
             n_bins=n_bins,
             y_on=y_on
         )
-        discretized_data_dict[key] = data
+        discretized_data_dict[key] = data_
 
     data = discretized_data_dict['6_bins']
     X_train = data['train']['X']
@@ -137,21 +137,21 @@ def run(results_file='../out/xyz.csv', y_on='class'):
 
     # Declare networks dict
     networks_dict = {
-        #'network_1': network_1, 
-        'network_2': network_2, 
-        #'network_3': network_3, 
-        #'network_4': network_4, 
-        #'naive_bayes': network_5, 
-        #'hcs_bic': hcs_bic, 
-        #'hcs_bdeu': hcs_bdeu, 
-        #'hcs_k2': hcs_k2, 
-        #'pc': pc_network, 
-        #'hcs_network_1': hc_own_networks[0], 
-        #'hcs_network_2': hc_own_networks[1], 
-        #'hcs_network_3': hc_own_networks[2], 
-        #'hcs_network_4': hc_own_networks[3], 
-        #'hcs_naive_bayes': hc_own_networks[4], 
-        #'hcs_pc': pchc_learned_model
+        # 'network_1': network_1, 
+        # 'network_2': network_2, 
+        # 'network_3': network_3, 
+        # 'network_4': network_4, 
+        'naive_bayes': network_5, 
+        # 'hcs_bic': hcs_bic, 
+        # 'hcs_bdeu': hcs_bdeu, 
+        # 'hcs_k2': hcs_k2, 
+        # 'pc': pc_network, 
+        # 'hcs_network_1': hc_own_networks[0], 
+        # 'hcs_network_2': hc_own_networks[1], 
+        # 'hcs_network_3': hc_own_networks[2], 
+        # 'hcs_network_4': hc_own_networks[3], 
+        # 'hcs_naive_bayes': hc_own_networks[4], 
+        # 'hcs_pc': pchc_learned_model
     }
 
     result_df = run_experiments(
@@ -167,10 +167,10 @@ def run(results_file='../out/xyz.csv', y_on='class'):
 
 if __name__ == '__main__':
     out_dir = '../out'
-    out_file = 'results_class.csv'
+    out_file = 'results_class_2.csv'  # results_class results_n_children
     results_file = os.path.join(out_dir, out_file)
 
     run(
         results_file=results_file,
-        y_on='n_children'  # n_children class
+        y_on='class'  # class n_children
     )

@@ -62,7 +62,6 @@ def discretize_data(data, continuous_attrs, n_bins=10, y_on='class'):
 
     X_train = _dataset['train']['X']
     X_test = _dataset['test']['X']
-   
     y_train = _dataset['train']['y']
     y_test = _dataset['test']['y']
     
@@ -79,16 +78,20 @@ def discretize_data(data, continuous_attrs, n_bins=10, y_on='class'):
         est.fit(X_train[continuous_attrs])
         X_train[continuous_attrs] = est.transform(X_train[continuous_attrs])
         X_test[continuous_attrs] = est.transform(X_test[continuous_attrs])
+
         _dataset['train']['X'] = X_train
         _dataset['test']['X'] = X_test
     elif y_on == 'n_children':
         train_ds = X_train.copy(deep=True)
         test_ds = X_test.copy(deep=True)
+
         train_ds['n_children'] = y_train
         test_ds['n_children'] = y_test
+
         est.fit(train_ds[continuous_attrs])
         train_ds[continuous_attrs] = est.transform(train_ds[continuous_attrs])
         test_ds[continuous_attrs] = est.transform(test_ds[continuous_attrs])
+
         _dataset['train']['X'] = train_ds[list(X_train.columns)]
         _dataset['test']['X'] = test_ds[list(X_train.columns)]
         _dataset['train']['y'] = train_ds['n_children']
