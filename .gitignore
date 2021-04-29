@@ -1,5 +1,6 @@
 # other
 /out/other
+/temp_pmg_env/
 
 # macOS
 .DS_Store
