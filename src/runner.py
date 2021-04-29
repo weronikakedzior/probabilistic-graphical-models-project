@@ -7,6 +7,8 @@ import pandas as pd
 # from networkx.drawing.nx_agraph import graphviz_layout
 from pgmpy.estimators import BicScore, BDeuScore, HillClimbSearch, K2Score, MmhcEstimator, PC
 from pgmpy.models import BayesianModel
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
 from tqdm import tqdm
 
 import utils
@@ -55,3 +57,38 @@ def run_experiments(
                 print('Done!')
     
     return result_df
+
+
+def run_bl_experiments(
+    discretized_data_dict: dict, 
+    clf_list: list
+):
+    n_experiments = len(discretized_data_dict) * len(clf_list)
+    experiment_num = 0
+    result_bl_df = pd.DataFrame(columns=['clf', 'n_bins', 
+                                      'accuracy', 'precision', 'recall', 'f1', 'time'])
+
+    for discretized_data_label, discretized_data in discretized_data_dict.items():
+        for clf_label in clf_list:                  
+            experiment_num += 1
+            print(f'Processing experiment: {experiment_num} out of {n_experiments} ...', end=' ')
+            start_time = time.time()
+
+            model_results = utils.run_scikit_experiment(
+                data=discretized_data, 
+                clf_label=clf_label
+            )
+
+            result_bl_df = result_bl_df.append({
+                'clf': clf_label, 
+                'n_bins': discretized_data_label, 
+                'accuracy': model_results['accuracy'], 
+                'precision': model_results['precision'], 
+                'recall': model_results['recall'], 
+                'f1': model_results['f1'], 
+                'time': round(time.time()-start_time, 3)
+            }, ignore_index=True)
+
+            print('Done!')
+    
+    return result_bl_df

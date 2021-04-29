@@ -7,6 +7,8 @@ from matplotlib import pyplot as plt
 from networkx.drawing.nx_agraph import graphviz_layout
 from pgmpy.estimators import BicScore, BDeuScore, HillClimbSearch, K2Score, MmhcEstimator, PC
 from pgmpy.models import BayesianModel
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import KBinsDiscretizer
@@ -166,6 +168,32 @@ def run_experiment(data, network, estimator='BayesianEstimator', y_on='class'):
         training_data=data['train']
     )
     y_pred = bn_model.predict(X_test, y_on=y_on)
+
+    return get_metrics(
+        y_true=y_test,
+        y_pred=y_pred,
+        average='macro'
+    )
+
+
+def run_scikit_experiment(data, clf_label):
+    # Declare data sets to variables
+    X_train = data['train']['X']
+    y_train = data['train']['y']
+    X_test = data['test']['X']
+    y_test = data['test']['y']
+    train_ds = pd.concat([X_train, y_train], axis=1)
+    test_ds = pd.concat([X_test, y_test], axis=1)
+
+    if clf_label == 'GaussianNB':
+        clf_scikit = GaussianNB()
+    elif clf_label == 'DecisionTree':
+        clf_scikit = DecisionTreeClassifier(random_state=42)
+    else:
+        print('That model is not available!')
+        
+    clf_scikit.fit(X=X_train, y=y_train)
+    y_pred = clf_scikit.predict(X=X_test)
 
     return get_metrics(
         y_true=y_test,

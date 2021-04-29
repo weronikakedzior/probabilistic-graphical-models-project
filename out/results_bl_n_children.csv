@@ -1,0 +1,7 @@
+,clf,n_bins,accuracy,precision,recall,f1,time
+0,GaussianNB,3_bins,0.817,0.377,0.374,0.375,0.01
+1,DecisionTree,3_bins,0.803,0.369,0.361,0.365,0.012
+2,GaussianNB,6_bins,0.58,0.361,0.328,0.286,0.009
+3,DecisionTree,6_bins,0.525,0.308,0.299,0.298,0.011
+4,GaussianNB,9_bins,0.339,0.181,0.255,0.144,0.011
+5,DecisionTree,9_bins,0.386,0.236,0.254,0.241,0.011

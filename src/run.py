@@ -1,4 +1,5 @@
 import os
+import sys
 from copy import deepcopy
 
 import networkx as nx
@@ -10,10 +11,10 @@ from pgmpy.models import BayesianModel
 
 import utils
 from model import BayesianNetworkModel
-from runner import run_experiments
+from runner import run_experiments, run_bl_experiments
 
 
-def run(results_file='../out/xyz.csv', y_on='class'):
+def run(results_file='../out/res.csv', results_file_bl='../out/res_bl.csv', y_on='class'):
     # Data loading and train/test split
     data = utils.load_data()
     data = utils.split_data(data, y_on=y_on)
@@ -49,7 +50,7 @@ def run(results_file='../out/xyz.csv', y_on='class'):
     #     'wife_working', 'husband_occup', 'sol_index', 'media_exposure', 
     #     'class'
     # ]
-
+    
     # Declare estimators dict
     estimators_dict = {
         'BayesianEstimator': 'BayesianEstimator', 
@@ -163,14 +164,39 @@ def run(results_file='../out/xyz.csv', y_on='class'):
 
     result_df.to_csv(results_file)
 
+    clf_list = [
+        'GaussianNB', 
+        'DecisionTree'
+    ]
+
+    result_bl_df = run_bl_experiments(
+        discretized_data_dict=discretized_data_dict, 
+        clf_list=clf_list
+    )
+
+    result_bl_df.to_csv(results_file_bl)
 
 
 if __name__ == '__main__':
+    available_y = ['class', 'n_children']
+
+    if len(sys.argv)<2 or sys.argv[1] not in available_y:
+        print('USAGE:')
+        print('\tpython run.py <predict_attr>')
+        print('\te.g. python run.py class | python run.py n_children')
+        sys.exit()
+
+    y_on = str(sys.argv[1])  # class n_children
+
     out_dir = '../out'
-    out_file = 'results_class.csv'  # results_class results_n_children
+    out_file = 'results_'+y_on+'.csv'
+    out_file_baselines = 'results_bl_'+y_on+'.csv'
+
     results_file = os.path.join(out_dir, out_file)
+    results_file_bl = os.path.join(out_dir, out_file_baselines)
 
     run(
         results_file=results_file,
-        y_on='class'  # class n_children
+        results_file_bl=results_file_bl, 
+        y_on=y_on
     )
