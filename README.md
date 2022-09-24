@@ -22,4 +22,4 @@ The results will be saved to the `out` folder in `.csv` format.
 
 Authors:
 - Marcel Cielinski
-- Weronika Pawlak
+- Weronika Kędzior (Pawlak)
